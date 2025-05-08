@@ -1,6 +1,8 @@
 package mpk.io;
 
 import mpk.model.Station;
+import mpk.model.Vehicle;
+
 import java.io.*;
 import java.util.*;
 
@@ -23,20 +25,40 @@ public class CsvLoader {
         return routes;
     }
 
-    public static List<List<Station>> loadProperties(String filePath) throws IOException {
-        List<List<Station>> properties = new ArrayList<>();
+    public static List<int[]> loadProperties(String filePath) throws IOException {
+        List<int[]> properties = new ArrayList<>();
         BufferedReader csv = new BufferedReader(new FileReader(filePath));
         String line;
         while ((line = csv.readLine()) != null) {
             String[] parts = line.split(",");
-            List<Station> property = new ArrayList<>();
+            // Zakładamy, że każdy wiersz ma format: NazwaPojazdu,MiejscaSiedzące,MiejscaStojące
+            String name = parts[0]; // Nazwa pojazdu może kiedyś do użycia ???
+            int seatingCapacity = Integer.parseInt(parts[1]); // Miejsca siedzące
+            int standingCapacity = Integer.parseInt(parts[2]); // Miejsca stojące
 
-            int seatingCapacity = Integer.parseInt(parts[1]);
-            int standingCapacity = Integer.parseInt(parts[2]);
-            System.out.println("Pojazd: " + parts[0] + ", Miejsca siedzące: " + seatingCapacity + ", Miejsca stojące: " + standingCapacity);
-
-            properties.add(property);
+            // Dodajemy pojemności do listy
+            properties.add(new int[]{seatingCapacity, standingCapacity});
+            //System.out.println("Pojazd: " + name + ", Miejsca siedzące: " + seatingCapacity + ", Miejsca stojące: " + standingCapacity);
         }
-        return properties;
+        csv.close();
+        return properties; // Zwracamy listę pojemności
     }
+
+    public static List<String> loadNames(String filePath) throws IOException {
+        List<String> names = new ArrayList<>();
+        BufferedReader csv = new BufferedReader(new FileReader(filePath));
+        String line;
+        while ((line = csv.readLine()) != null) {
+            String[] parts = line.split(",");
+
+            String name = parts[0]; // Nazwa pojazdu może kiedyś do użycia ???
+
+            // Dodajemy pojemności do listy
+            names.add(name);
+            //System.out.println("Pojazd: " + name + ", Miejsca siedzące: " + seatingCapacity + ", Miejsca stojące: " + standingCapacity);
+        }
+        csv.close();
+        return names; // Zwracamy listę pojemności
+    }
+
 }

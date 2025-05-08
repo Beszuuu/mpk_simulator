@@ -1,20 +1,20 @@
-Tram1,
-Tram2,Krzyki,0.5,Wzgórze Partyzantów,0.3,Opera,0.6,Rynek,0.7,Plac Jana Pawła,0.4,Wrocław Główny,0.6,Arkady,0.5,Powstańców Śl.,0.4,Borek,0.2,Klecina,0.5
-Tram3,Psie Pole,0.4,Sołtysowice,0.3,Kromera,0.5,Mosty Warszawskie,0.6,Nadodrze,0.3,Pomorska,0.4,Dworzec Nadodrze,0.6,Ołbin,0.5,Plac Grunwaldzki,0.5,ZOO,0.4
-Tram4,Nowy Dwór,0.7,Strzegomska,0.5,Śrubowa,0.4,Robotnicza,0.6,Pl. Orląt Lwowskich,0.3,Rynek,0.2,Hala Targowa,0.3,Szczytnicka,0.5,ZOO,0.6,Biskupin,0.4
-Tram5,Kozanów,0.3,Popowice,0.4,Pilczyce,0.5,Stadion,0.2,Grabiszyńska,0.3,Arkady,0.4,Renoma,0.4,Galeria Dominikańska,0.5,Most Grunwaldzki,0.5,Bartoszowice,0.6
-Tram6,Leśnica,0.4,Maślice,0.3,Pilczyce,0.2,Popowice,0.5,Plac Jana Pawła,0.3,Rynek,0.6,Dworzec Główny,0.7,Księcia Witolda,0.4,Grunwaldzka,0.5,ZOO,0.3
-Tram7,Sępolno,0.5,Biskupin,0.4,Księcia Witolda,0.3,Galeria Dominikańska,0.6,Rynek,0.5,Nowy Dwór,0.4,Krzyki,0.5,Wrocław Główny,0.6,Plac Jana Pawła,0.7
-Tram8,Psie Pole,0.4,Sołtysowice,0.3,Kromera,0.5,Mosty Warszawskie,0.6,Nadodrze,0.3,Pomorska,0.4,Dworzec Nadodrze,0.6,Ołbin,0.5,Plac Grunwaldzki,0.5
-Tram9,Nowy Dwór,0.7,Strzegomska,0.5,Śrubowa,0.4,Robotnicza,0.6,Pl. Orląt Lwowskich,0.3,Rynek,0.2,Hala Targowa,0.3,Szczytnicka,0.5,ZOO,0.6
-Tram10,Kozanów,0.3,Popowice,0.4,Pilczyce,0.5,Stadion,0.2,Grabiszyńska,0.3,Arkady,0.4,Renoma,0.4,Galeria Dominikańska,0.5,Most Grunwaldzki,0.5
-Bus1,Nowy Dwór,0.7,Strzegomska,0.5,Śrubowa,0.4,Robotnicza,0.6,Pl. Orląt Lwowskich,0.3,Rynek,0.2,Hala Targowa,0.3,Szczytnicka,0.5,ZOO,0.6
-Bus2,Kozanów,0.3,Popowice,0.4,Pilczyce,0.5,Stadion,0.2,Grabiszyńska,0.3,Arkady,0.4,Renoma,0.4,Galeria Dominikańska,0.5,Most Grunwaldzki,0.5
-Bus3,Leśnica,0.4,Maślice,0.3,Pilczyce,0.2,Popowice,0.5,Plac Jana Pawła,0.3,Rynek,0.6,Dworzec Główny,0.7,Księcia Witolda,0.4,Grunwaldzka,0.5
-Bus4,Strzegom,0.5,Biskupin,0.4,Nowy Dwór,0.3,Krzyki,0.2,Plac Grunwaldzki,0.3,ZOO,0.6,Rynek,0.5,Sępolno,0.4
-Bus5,Psie Pole,0.4,Sołtysowice,0.3,Kromera,0.5,Mosty Warszawskie,0.6,Nadodrze,0.3,Pomorska,0.4,Dworzec Nadodrze,0.6,Ołbin,0.5
-Bus6,Leśnica,0.4,Maślice,0.3,Pilczyce,0.2,Popowice,0.5,Plac Jana Pawła,0.3,Rynek,0.6,Dworzec Główny,0.7,Księcia Witolda,0.4
-Bus7,Nowy Dwór,0.7,Strzegomska,0.5,Śrubowa,0.4,Robotnicza,0.6,Pl. Orląt Lwowskich,0.3,Rynek,0.2,Hala Targowa,0.3,Szczytnicka,0.5
-Bus8,Kozanów,0.3,Popowice,0.4,Pilczyce,0.5,Stadion,0.2,Grabiszyńska,0.3,Arkady,0.4,Renoma,0.4,Galeria Dominikańska,0.5
-Bus9,Strzegom,0.5,Biskupin,0.4,Nowy Dwór,0.3,Krzyki,0.2,Plac Grunwaldzki,0.3,ZOO,0.6,Rynek,0.5,Sępolno,0.4
-Bus10,Psie Pole,0.4,Sołtysowice,0.3,Kromera,0.5,Mosty Warszawskie,0.6,Nadodrze,0.3,Pomorska,0.4,Dworzec Nadodrze,0.6,Ołbin,0.5
+Bus1,10,5
+Bus2,12,6
+Bus3,15,7
+Bus4,18,8
+Bus5,20,10
+Bus6,11,6
+Bus7,14,7
+Bus8,19,9
+Bus9,13,5
+Bus10,16,8
+Tram1,10,5
+Tram2,15,7
+Tram3,12,6
+Tram4,18,9
+Tram5,20,10
+Tram6,14,8
+Tram7,11,6
+Tram8,19,12
+Tram9,13,7
+Tram10,17,11

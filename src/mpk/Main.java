@@ -6,6 +6,10 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws Exception {
         List<List<Station>> routes = CsvLoader.loadRoutes("src\\mpk\\utils\\routes.csv");
+        List<int[]> properties = CsvLoader.loadProperties("src\\mpk\\utils\\vehicles.csv");
+
+        System.out.println("Witaj w symulatorze MPK!");
+
         Scanner scanner = new Scanner(System.in);
         int bus = -1;
         int tram = -1;
@@ -28,11 +32,13 @@ public class Main {
         List<Vehicle> vehicles = new ArrayList<>();
         // Tworzenie autobusów
         for (int i = 0; i < bus; i++) {
-            vehicles.add(new Bus("Bus" + i, routes.get(i), 100));
+            vehicles.add(new Bus("Bus" + i, routes.get(i), properties.get(i)[0]));
+            System.out.println("Stworzono : " + vehicles.get(i).getName() + " z pojemnością: " + vehicles.get(i).getCapacity() + " pasażerów" + " na linii rozpoczynającej się od:" + vehicles.get(i).getRoute().getFirst().getName());
         }
         // Tworzenie tramwajów
-        for (int i = 0; i < tram; i++) {
-            vehicles.add(new Tram("Tram" + i, routes.get(i + bus), 100)); // Używamy i + bus, aby nie kolidować z autobusami
+        for (int i = bus; i < tram + bus; i++) {
+            vehicles.add(new Tram("Tram" + i, routes.get(i), properties.get(i)[0])); // Używamy i + bus, aby nie kolidować z autobusami
+            System.out.println("Stworzono : " + vehicles.get(i).getName() + " z pojemnością: " + vehicles.get(i).getCapacity() + " pasażerów" + " na linii rozpoczynającej się od:" + vehicles.get(i).getRoute().getFirst().getName());
         }
         Simulation sim = new Simulation(vehicles, 0.8);
         // Menu wyboru trybu symulacji

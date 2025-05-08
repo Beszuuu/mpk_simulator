@@ -1,6 +1,9 @@
 package mpk.engine;
 
+import mpk.io.CsvLoader;
 import mpk.model.*;
+
+import java.io.IOException;
 import java.util.*;
 
 //definicja klasy
@@ -16,7 +19,8 @@ public class Simulation {
         this.ticketProbability = ticketProbability;
     }
 
-    public void step() {
+    public void step() throws IOException {
+        List<String> names = CsvLoader.loadNames("src\\mpk\\utils\\names.csv");
         for (Vehicle v : vehicles) {
             v.unloadPassengers();
             Station current = v.getCurrentStation();
@@ -25,9 +29,11 @@ public class Simulation {
             if (rand.nextDouble() < current.getPopularity()) {
                 int numPassengers = rand.nextInt(v.capacity - v.passengers.size());
                 for (int i = 0; i < numPassengers; i++) {
+                    String name = names.get(rand.nextInt(names.size()));
                     String dest = v.route.get(rand.nextInt(v.route.size())).getName();
+                    //System.out.println(dest);
                     boolean hasTicket = rand.nextDouble() < ticketProbability;
-                    v.boardPassenger(new Passenger(dest, hasTicket));
+                    v.boardPassenger(new Passenger(name, dest, hasTicket));
                 }
             }
 
@@ -36,15 +42,17 @@ public class Simulation {
                 Controller c = new Controller();
                 int caught = c.checkPassengers(v.getPassengers());
                 earnings += caught * 160;
-                System.out.println("Kontroler w " + v.getId() + ": bez biletu: " + caught);
+                System.out.println("Kontroler w " + v.getName() + ": bez biletu: " + caught);
             }
-
-            v.nextStation();
+            System.out.println();
+            System.out.print(v.getName() + " " + v.getCurrentStation().toString() + " " + " " + v.getCurrentStationNumber());
+            for (Passenger p : v.getPassengers()) {
+                System.out.print(" | " + p.getName() + " → " + p.getDestination());
+            }
         }
     }
 
     public void summary() {
-
         System.out.println("Koniec symulacji. Dochód: " + earnings + " PLN");
     }
 }
