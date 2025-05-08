@@ -1,8 +1,8 @@
 package mpk.model;
 
 public class Passenger {
-    private String destination;
-    private boolean hasTicket;
+    private final String destination;
+    private final boolean hasTicket;
 
     public Passenger(String destination, boolean hasTicket) {
         this.destination = destination;

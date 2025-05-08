@@ -19,7 +19,7 @@ public class Simulation {
     public void step() {
         for (Vehicle v : vehicles) {
             v.unloadPassengers();
-            Stop current = v.getCurrentStop();
+            Station current = v.getCurrentStation();
 
             // Generowanie nowych pasażerów
             if (rand.nextDouble() < current.getPopularity()) {
@@ -39,11 +39,12 @@ public class Simulation {
                 System.out.println("Kontroler w " + v.getId() + ": bez biletu: " + caught);
             }
 
-            v.nextStop();
+            v.nextStation();
         }
     }
 
     public void summary() {
-        System.out.println("Koniec symulacji. Dochód: " + earnings + " zł");
+
+        System.out.println("Koniec symulacji. Dochód: " + earnings + " PLN");
     }
 }

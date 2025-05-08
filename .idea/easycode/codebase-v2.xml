@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/src/mpk/engine/Simulation.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/src/mpk/io/CsvLoader.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/src/mpk/model/Bus.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/src/mpk/model/Controller.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/src/mpk/model/Passenger.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/src/mpk/model/Stop.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/src/mpk/model/Tram.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/src/mpk/model/Vehicle.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/src/mpk/tests/AllTests.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/src/mpk/Main.java;C:/Users/Jakub/IdeaProjects/mpk_simulator/README.md" />
+  </component>
+</project>

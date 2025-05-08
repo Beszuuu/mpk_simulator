@@ -1,10 +1,10 @@
 package mpk.model;
 
-public class Stop {
+public class Station {
     private String name;
     private double popularity; // Prawdopodobieństwo generowania pasażera
 
-    public Stop(String name, double popularity) {
+    public Station(String name, double popularity) {
         this.name = name;
         this.popularity = popularity;
     }
