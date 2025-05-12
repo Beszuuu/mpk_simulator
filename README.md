@@ -9,7 +9,7 @@ Projekt został stworzony w ramach zajęć **Programowania Obiektowego** i stano
 - Jakub Besz — 284441  
 - Miłosz Osadczuk — 284604  
 
-**Prowadzący:** Mgr inż. Tobiasz Puśclecki
+**Prowadzący:** Mgr inż. Tobiasz Puślecki
 
 ## Funkcjonalności
 
