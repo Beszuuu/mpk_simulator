@@ -42,17 +42,18 @@ public class Simulation {
                 Controller c = new Controller();
                 int caught = c.checkPassengers(v.getPassengers());
                 earnings += caught * 160;
-                System.out.println("Kontroler w " + v.getName() + ": bez biletu: " + caught);
+                System.out.println("\n\nKontroler w " + v.getName() + ": bez biletu: " + caught);
             }
             System.out.println();
             System.out.print(v.getName() + " " + v.getCurrentStation().toString() + " " + " " + v.getCurrentStationNumber());
             for (Passenger p : v.getPassengers()) {
                 System.out.print(" | " + p.getName() + " → " + p.getDestination());
             }
+
         }
     }
 
     public void summary() {
-        System.out.println("Koniec symulacji. Dochód: " + earnings + " PLN");
+        System.out.println("\n\nKoniec symulacji. Dochód: " + earnings + " PLN");
     }
 }
