@@ -4,7 +4,9 @@ import mpk.io.CsvLoader;
 import mpk.model.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Random;
+//import java.util.*;
 
 //definicja klasy
 public class Simulation {
@@ -49,7 +51,7 @@ public class Simulation {
             for (Passenger p : v.getPassengers()) {
                 System.out.print(" | " + p.getName() + " → " + p.getDestination());
             }
-
+            v.nextStation();
         }
     }
 
