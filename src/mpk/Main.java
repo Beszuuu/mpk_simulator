@@ -5,8 +5,8 @@ import mpk.engine.*;
 import java.util.*;
 public class Main {
     public static void main(String[] args) throws Exception {
-        List<List<Station>> routes = CsvLoader.loadRoutes("src\\mpk\\utils\\routes.csv");
-        List<int[]> properties = CsvLoader.loadProperties("src\\mpk\\utils\\vehicles.csv");
+        List<List<Station>> routes = CsvLoader.loadRoutes("src\\mpk\\input\\routes.csv");
+        List<int[]> properties = CsvLoader.loadProperties("src\\mpk\\input\\vehicles.csv");
 
         System.out.println("Witaj w symulatorze MPK!");
 

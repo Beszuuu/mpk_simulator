@@ -20,7 +20,7 @@ public class Simulation {
     }
 
     public void step() throws IOException {
-        List<String> names = CsvLoader.loadNames("src\\mpk\\utils\\names.csv");
+        List<String> names = CsvLoader.loadNames("src\\mpk\\input\\names.csv");
         for (Vehicle v : vehicles) {
             v.unloadPassengers();
             Station current = v.getCurrentStation();
