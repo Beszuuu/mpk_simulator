@@ -9,6 +9,10 @@ public class CsvSaver {
     public static void saveControlResults(Map<String, Map<String, Integer>> results) throws IOException {
         String folderPath = "src/mpk/output";
 
+        File folder = new File(folderPath);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
 
         // Najwyższy numer istniejącego pliku
         int fileIndex = 1;
