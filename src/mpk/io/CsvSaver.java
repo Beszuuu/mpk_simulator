@@ -1,4 +1,41 @@
 package mpk.io;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+
 public class CsvSaver {
+    public static void saveControlResults(Map<String, Map<String, Integer>> results) throws IOException {
+        String folderPath = "src/mpk/output";
+
+
+        // Najwyższy numer istniejącego pliku
+        int fileIndex = 1;
+        File file;
+        do {
+            file = new File(folderPath + File.separator + "inspections_" + fileIndex + ".csv");
+            fileIndex++;
+        } while (file.exists());
+
+        fileIndex--;
+        File outputFile = new File(folderPath + File.separator + "inspections_" + fileIndex + ".csv");
+
+        // Zapis do pliku
+        FileWriter writer = new FileWriter(outputFile);
+
+        for (Map.Entry<String, Map<String, Integer>> vehicleEntry : results.entrySet()) {
+            String vehicleName = vehicleEntry.getKey();
+            writer.write(vehicleName + ":\n");
+
+            for (Map.Entry<String, Integer> stationEntry : vehicleEntry.getValue().entrySet()) {
+                writer.write(stationEntry.getKey() + ", " + stationEntry.getValue() + " caught\n");
+            }
+
+            writer.write("\n");
+        }
+
+        writer.close();
+        System.out.println("Zapisano kontrolę do pliku: " + outputFile.getPath());
+    }
 }

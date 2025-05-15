@@ -16,4 +16,10 @@ public class Station {
     public double getPopularity() {
         return popularity;
     }
+
+    // Do wyświetlania nazw przystnków
+    @Override
+    public String toString() {
+        return name;
+    }
 }
