@@ -18,6 +18,7 @@ public class Simulation {
     private double ticketProbability;
     private double controllerChance = 0.1;
     private int earnings = 0;
+    private int totalCaptures = 0;
     private Map<String, Map<String, Integer>> controlResults = new HashMap<>();
 
     public Simulation(List<Vehicle> vehicles, double ticketProbability) {
@@ -48,6 +49,7 @@ public class Simulation {
                 Controller c = new Controller();
                 int caught = c.checkPassengers(v.getPassengers());
                 earnings += caught * 160;
+                totalCaptures += caught;
                 System.out.println("\n\nKontroler w " + v.getName() + ": bez biletu: " + caught);
 
                 // Dopisywanie wyników do HashMap
@@ -71,7 +73,7 @@ public class Simulation {
         System.out.println("\n\nKoniec symulacji. Dochód: " + earnings + " PLN");
 
         try {
-            CsvSaver.saveControlResults(controlResults);
+            CsvSaver.saveControlResults(controlResults, totalCaptures, earnings);
         } catch (IOException e) {
             System.err.println("Błąd przy zapisie wyników do pliku CSV: " + e.getMessage());
         }

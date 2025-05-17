@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class CsvSaver {
-    public static void saveControlResults(Map<String, Map<String, Integer>> results) throws IOException {
+    public static void saveControlResults(Map<String, Map<String, Integer>> results, int totalCaptures, int earnings) throws IOException {
         String folderPath = "src/mpk/output";
 
         File folder = new File(folderPath);
@@ -18,12 +18,12 @@ public class CsvSaver {
         int fileIndex = 1;
         File file;
         do {
-            file = new File(folderPath + File.separator + "inspections_" + fileIndex + ".csv");
+            file = new File(folderPath + File.separator + "inspection_" + fileIndex + ".csv");
             fileIndex++;
         } while (file.exists());
 
         fileIndex--;
-        File outputFile = new File(folderPath + File.separator + "inspections_" + fileIndex + ".csv");
+        File outputFile = new File(folderPath + File.separator + "inspection_" + fileIndex + ".csv");
 
         // Zapis do pliku
         FileWriter writer = new FileWriter(outputFile);
@@ -38,6 +38,9 @@ public class CsvSaver {
 
             writer.write("\n");
         }
+
+        writer.write("Total captures: " + totalCaptures + "\n");
+        writer.write("Total earnings: " + earnings + " PLN \n");
 
         writer.close();
         System.out.println("Zapisano kontrolę do pliku: " + outputFile.getPath());
