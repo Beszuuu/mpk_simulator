@@ -32,7 +32,8 @@ public class Vehicle {
     public int getCurrentStationNumber() {
         return currentStationNumber;
     }
-    public Station getCurrentStation() { return route.get(currentStationNumber);
+    public Station getCurrentStation() {
+        return route.get(currentStationNumber);
     }
     public List<Passenger> getPassengers() {
         return passengers;

@@ -37,7 +37,7 @@ public class Simulation {
                 int numPassengers = rand.nextInt(v.capacity - v.passengers.size());
                 for (int i = 0; i < numPassengers; i++) {
                     String name = names.get(rand.nextInt(names.size()));
-                    String dest = v.route.get(rand.nextInt(v.route.size())).getName();
+                    String dest = v.route.get(rand.nextInt(v.route.size()-1)).getName();
                     //System.out.println(dest);
                     boolean hasTicket = rand.nextDouble() < ticketProbability;
                     v.boardPassenger(new Passenger(name, dest, hasTicket));
@@ -66,6 +66,12 @@ public class Simulation {
                 System.out.print(" | " + p.getName() + " → " + p.getDestination());
             }
             v.nextStation();
+
+            // DO POPRAWY
+            /*if (v.getCurrentStationNumber() == v.route.size()) {
+                v.passengers.clear();
+                System.out.println(" " + v.getName() + " wjechał na zajednie- koniec trasy");
+            }*/
         }
     }
 
@@ -77,5 +83,11 @@ public class Simulation {
         } catch (IOException e) {
             System.err.println("Błąd przy zapisie wyników do pliku CSV: " + e.getMessage());
         }
+    }
+
+    public void clearAll() {
+        System.out.println("\n\nKoniec symulacji, czyszczenie");
+        vehicles.clear();
+        controlResults.clear();
     }
 }

@@ -33,7 +33,7 @@ public class Main {
         // Tworzenie autobusów
         for (int i = 0; i < bus; i++) {
             vehicles.add(new Bus("Bus" + i, routes.get(i), properties.get(i)[0]));
-            System.out.println("Stworzono : " + vehicles.get(i).getName() + " z pojemnością: " + vehicles.get(i).getCapacity() + " pasażerów" + " na linii rozpoczynającej się od:" + vehicles.get(i).getRoute().getFirst().getName());
+            System.out.println("Stworzono : " + vehicles.get(i).getName() + " z pojemnością: " + vehicles.get(i).getCapacity() + " pasażerów" + " na linii rozpoczynającej się od:" + vehicles.get(i).getRoute().getFirst().getName() + vehicles.get(i).getRoute().getLast().getName());
         }
         // Tworzenie tramwajów
         for (int i = bus; i < tram + bus; i++) {
@@ -74,7 +74,11 @@ public class Main {
                     Thread.currentThread().interrupt();
                 }
             }
+            sim.step();
+
         }
         sim.summary();
+        sim.clearAll();
+        scanner.close();
     }
 }
