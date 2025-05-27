@@ -12,14 +12,13 @@ public class Vehicle {
     public List<Station> route;
     public List<Passenger> passengers = new ArrayList<>();
 
-    // --- Konstruktor ---
+
     public Vehicle(String name, List<Station> route, int capacity) {
         this.name = name;
         this.route = route;
         this.capacity = capacity;
     }
 
-    // --- Gettery ---
     public String getName() {
         return name;
     }
@@ -41,7 +40,6 @@ public class Vehicle {
 
 
 
-    // --- Logika działania pojazdu ---
     public void nextStation() {
         if (currentStationNumber < route.size() - 1) {
             currentStationNumber++;
@@ -55,10 +53,11 @@ public class Vehicle {
     }
 
     public void unloadPassengers() {
-        String currentStationName = getCurrentStation().getName();
-        passengers.removeIf(p -> p.getDestination().equals(currentStationName));
+        // This removes passengers who’ve reached their stop
+        String stopNow = getCurrentStation().getName();
+
+        // this mutates the list while iterating, but removeIf handles that fine
+        passengers.removeIf(passenger -> stopNow.equals(passenger.getDestination()));
     }
-
-
 
 }
