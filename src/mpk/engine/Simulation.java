@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.util.*;
 
 public class Simulation {
-    private List<Vehicle> vehicles;
-    private Random rand = new Random();
-    private double ticketProbability;
-    private double controllerChance = 0.1; // Chance a controller shows up on a vehicle
+    private final List<Vehicle> vehicles;
+    private final Random rand = new Random();
+    private final double ticketProbability;
+    private final double controllerChance = 0.1; // Chance a controller shows up on a vehicle
     private int earnings = 0;
     private int totalCaptures = 0;
     // Keeps track of how many passengers without tickets were caught per vehicle and station
@@ -29,42 +29,59 @@ public class Simulation {
         List<String> names = CsvLoader.loadNames("src\\mpk\\input\\names.csv");
 
         for (Vehicle v : vehicles) {
-            v.unloadPassengers(); // Passengers whose destination is current station get off
+            if (v.isActive()) { // Only move active vehicles
+                v.unloadPassengers(); // Passengers whose destination is current station get off
 
-            genPassengers(v, names); // Generate new passengers boarding this vehicle
+                genPassengers(v, names); // Generate new passengers boarding this vehicle
 
-            controlEvent(v); // Maybe a ticket controller appears and checks passengers
+                controlEvent(v); // Maybe a ticket controller appears and checks passengers
 
-            // Display vehicle info and its passengers
-            System.out.println();
-            System.out.print(v.getName() + " at " + v.getCurrentStation() + " (Stop " + v.getCurrentStationNumber() + ")");
-            for (Passenger p : v.getPassengers()) {
-                System.out.print(" | " + p.getName() + " → " + p.getDestination());
+                // Display vehicle info and its passengers
+                System.out.println();
+                System.out.print(v.getName() + " at " + v.getCurrentStation() + " (Stop " + v.getCurrentStationNumber() + ")");
+                for (Passenger p : v.getPassengers()) {
+                    System.out.print(" | " + p.getName() + " → " + p.getDestination());
+                }
+
+                v.nextStation(); // Move vehicle to the next stop
+            } else {
+                v.unloadPassengers(); // Passengers whose destination is current station get off
+                System.out.println();
+                System.out.print(v.getName() + " at DEPOT (Stop end)");
+                /*
+                for (Passenger p : v.getPassengers()) {
+                    System.out.print(" | " + p.getName() + " → " + p.getDestination());
+                }*/
             }
-
-            v.nextStation(); // Move vehicle to the next stop
         }
     }
 
     // Generate passengers at the current station who want to board the vehicle
     public void genPassengers(Vehicle v, List<String> names) {
         Station current = v.getCurrentStation();
-        // Check if the station is popular enough to generate passengers this step
         if (rand.nextDouble() < current.getPopularity()) {
             int availableSeats = v.capacity - v.passengers.size();
-            if (availableSeats <= 0) return; // No free seats left
+            if (availableSeats <= 0) return;
 
-            // Decide how many passengers to add, at most the free seats available
-            int numPassengers = rand.nextInt(availableSeats) + 1; // +1 so at least 1 if available
+            int numPassengers = rand.nextInt(availableSeats) + 1;
+
             for (int i = 0; i < numPassengers; i++) {
                 String name = names.get(rand.nextInt(names.size()));
-                // Pick a random destination on the vehicle's route (not including last stop)
-                String dest = v.route.get(rand.nextInt(v.route.size() - 1)).getName();
-                boolean hasTicket = rand.nextDouble() < ticketProbability; // Decide if passenger has ticket
+
+                // Wybierz cel: tylko stacje dalej na trasie
+                int currentIndex = v.getCurrentStationNumber();
+                List<Station> futureStops = v.route.subList(currentIndex + 1, v.route.size());
+
+                if (futureStops.isEmpty()) break; // Nie ma już dokąd jechać
+
+                String dest = futureStops.get(rand.nextInt(futureStops.size())).getName();
+
+                boolean hasTicket = rand.nextDouble() < ticketProbability;
                 v.boardPassenger(new Passenger(name, dest, hasTicket));
             }
         }
     }
+
 
     // Maybe a controller appears and checks passengers for tickets
     public void controlEvent(Vehicle v) {

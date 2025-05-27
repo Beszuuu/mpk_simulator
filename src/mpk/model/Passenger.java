@@ -1,6 +1,5 @@
 package mpk.model;
 
-import javax.swing.*;
 
 public class Passenger {
     private final String name;

@@ -16,7 +16,7 @@ public class Main {
         do {
             System.out.println("-! Welcome to the MPK Simulator!");
 
-            // Load data from the input files (yes, this is hardcoded)
+            // Load data from the input files (this is hardcoded)
             List<List<Station>> availableRoutes = CsvLoader.loadRoutes("src/mpk/input/routes.csv");
             List<int[]> vehicleStats = CsvLoader.loadProperties("src/mpk/input/vehicles.csv");
 
@@ -24,19 +24,19 @@ public class Main {
             int busesCount = getUserNumber(userInput, "-> Enter number of buses (0–10): ", 0, 10);
             int tramsCount = getUserNumber(userInput, "-> Enter number of trams (0–10): ", 0, 10);
 
-            // Ask user if they want to steer the sim or sit back
+            // Ask user if they want to perform auto / manulal mode
             String simulationMode = getSimulationMode(userInput);
 
-            // We'll populate this list with all the buses/trams later
+            // We'll fill this list with all the buses/trams
             List<Vehicle> fleet = new ArrayList<>();
 
-            // Manual mode gives the user more say over what routes the vehicles take
+            // Manual mode
             if (simulationMode.equalsIgnoreCase("m")) {
-                userInput.nextLine(); // Ugh, Java Scanner quirks...
+                userInput.nextLine(); // Ugh, Java Scanner is ....
 
                 for (int i = 0; i < busesCount + tramsCount; i++) {
-                    List<Station> fullRoute = availableRoutes.get(i);
-                    int maxAvailableStops = fullRoute.size();
+                    List<Station> fullRoute = availableRoutes.get(i); // Get the full route for the current vehicle
+                    int maxAvailableStops = fullRoute.size(); // Get the number of stops in the full route
 
                     System.out.println("-! Vehicle " + i + " has " + maxAvailableStops + " stops to choose from.");
 
@@ -44,10 +44,10 @@ public class Main {
                     int chosenStops;
 
                     if (pickRandomStops) {
-                        // I swear this math works Miłosz XD
+                        // Miłosz I swear this works  XD
                         chosenStops = new Random().nextInt(maxAvailableStops - 2) + 3;
                     } else {
-                        chosenStops = getUserNumber(userInput, "-> Enter number of stops to include (3 - " + maxAvailableStops + "): ", 3, maxAvailableStops);
+                        chosenStops = getUserNumber(userInput, "-> Enter number of stops to include (2 - " + maxAvailableStops + "): ", 3, maxAvailableStops);
                     }
 
                     List<Station> selectedRoute;
@@ -77,15 +77,15 @@ public class Main {
                 userInput.nextLine(); // Scanner cleanup again
 
                 for (int i = 0; i < busesCount + tramsCount; i++) {
-                    List<Station> fullRoute = availableRoutes.get(i);
-                    int maxStops = fullRoute.size();
+                    List<Station> fullRoute = availableRoutes.get(i); // Get the full route for the current vehicle
+                    int maxStops = fullRoute.size(); // Get the number of stops in the full route
 
                     boolean shuffleStops = promptYesNo(userInput, "-> Randomize stop selection for vehicle " + i + "? (y/n): ");
                     int stopCount;
                     if (shuffleStops) {
                         stopCount = new Random().nextInt(maxStops - 2) + 3; // range: 3 to maxStops
                     } else {
-                        stopCount = getUserNumber(userInput, "-> Enter number of stops to include (2 - " + maxStops + "): ", 2, maxStops);
+                        stopCount = getUserNumber(userInput, "-> Enter number of stops to include (3 - " + maxStops + "): ", 3, maxStops);
                     }
 
                     List<Station> shortRoute;
@@ -126,10 +126,11 @@ public class Main {
         System.out.println("-! Simulation ended. Goodbye!");
     }
 
-    // === Utility methods ===
+    // ### Utility methods ###
 
+    // I take this shit from internet but it works XD
     private static int getUserNumber(Scanner scanner, String prompt, int min, int max) {
-        int value = -99;  // Sentinel
+        int value = -99;  // I take this shit from internet but it works
         while (value < min || value > max) {
             System.out.print(prompt);
             if (scanner.hasNextInt()) {
@@ -147,7 +148,7 @@ public class Main {
     private static String getSimulationMode(Scanner scanner) {
         String choice = "";
         while (!choice.equalsIgnoreCase("a") && !choice.equalsIgnoreCase("m")) {
-            System.out.println("-> Choose mode: (A)utomatic or (M)anual (SPACE/Q)");
+            System.out.println("-> Choose mode: (A)utomatic or (M)anual (type A/M then Enter)");
             choice = scanner.next();
         }
         return choice;
@@ -156,7 +157,7 @@ public class Main {
     private static void stepThroughSimulation(Simulation sim, Scanner scanner) throws Exception {
         scanner.nextLine(); // Clear buffer
         while (true) {
-            System.out.println("-> Hit SPACE to advance, Q to stop:");
+            System.out.println("-> Hit SPACE to move forward, Q to stop simulation:");
             String input = scanner.nextLine();
             if ("q".equalsIgnoreCase(input)) break;
             sim.step(); // Do a single step
@@ -185,7 +186,7 @@ public class Main {
             if ("q".equals(response)) return false;
             if (response.isEmpty()) return true;
 
-            System.out.println("-! Confused — try just hitting Enter to restart, or Q to quit.");
+            System.out.println("-! Please repeat — try just hitting Enter to restart, or Q to quit.");
         }
     }
 
@@ -198,7 +199,7 @@ public class Main {
         return answer.equalsIgnoreCase("y");
     }
 
-    private static List<Station> pickRandomStopsSubset(List<Station> list, int count) {
+    public static List<Station> pickRandomStopsSubset(List<Station> list, int count) {
         // Shuffle a copy so we don't mess with the original
         List<Station> temp = new ArrayList<>(list);
         Collections.shuffle(temp);

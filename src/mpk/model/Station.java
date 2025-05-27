@@ -1,8 +1,8 @@
 package mpk.model;
 
 public class Station {
-    private String name;
-    private double popularity; // Prawdopodobieństwo generowania pasażera
+    private final String name;
+    private final double popularity; // A value representing how "busy" or "well-known" the station is
 
     public Station(String name, double popularity) {
         this.name = name;
@@ -17,7 +17,6 @@ public class Station {
         return popularity;
     }
 
-    // Do wyświetlania nazw przystnków
     @Override
     public String toString() {
         return name;
