@@ -11,13 +11,22 @@ public class Vehicle implements InterfaceVehicle {
     public List<Station> route;
     public List<Passenger> passengers = new ArrayList<>();
     protected boolean active = true;
-
+    private int boughtTickets = 0;
 
     public Vehicle(String name, List<Station> route, int capacity) {
         this.name = name;
         this.route = route;
         this.capacity = capacity;
     }
+
+    public void incrementBoughtTickets() {
+        boughtTickets++;
+    }
+
+    public int getBoughtTickets() {
+        return boughtTickets;
+    }
+
     @Override
     public String getName() {
         return name;

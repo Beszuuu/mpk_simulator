@@ -14,6 +14,9 @@ public class Simulation {
     private final double controllerChance = 0.1; // Chance a controller shows up on a vehicle
     private int earnings = 0;
     private int totalCaptures = 0;
+    private int totalBoughtTickets = 0;
+    // Stores how many tickets were bought per vehicle
+    private Map<String, Integer> boughtTicketsMap = new HashMap<>();
     // Keeps track of how many passengers without tickets were caught per vehicle and station
     private Map<String, Map<String, Integer>> controlResults = new HashMap<>();
 
@@ -81,6 +84,10 @@ public class Simulation {
 
                 boolean hasTicket = rand.nextDouble() < ticketProbability;
                 v.boardPassenger(new Passenger(fullName, dest, hasTicket));
+                if(hasTicket){
+                    v.incrementBoughtTickets();
+                    totalBoughtTickets++;
+                }
             }
         }
     }
@@ -107,10 +114,17 @@ public class Simulation {
 
     // After simulation ends, print earnings and save control results to CSV
     public void summary() {
+        // Add earnings from bought tickets (2 PLN per ticket)
+        earnings += totalBoughtTickets * 2;
         System.out.println("\n\n-> Simulation finished. Total earnings: " + earnings + " PLN");
 
+        // Build ticket count summary per vehicle
+        for (Vehicle v : vehicles) {
+            boughtTicketsMap.put(v.getName(), v.getBoughtTickets());
+        }
+
         try {
-            CsvSaver.saveControlResults(controlResults, totalCaptures, earnings);
+            CsvSaver.saveControlResults(controlResults, boughtTicketsMap, totalCaptures, earnings, totalBoughtTickets);
         } catch (IOException e) {
             System.err.println("-> Error saving control results to CSV: " + e.getMessage());
         }
@@ -121,5 +135,6 @@ public class Simulation {
         System.out.println("\n\n-> Clearing simulation data");
         vehicles.clear();
         controlResults.clear();
+        boughtTicketsMap.clear();
     }
 }
