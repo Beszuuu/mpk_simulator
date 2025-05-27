@@ -45,8 +45,9 @@ public class AllTests {
         List<Vehicle> vehicles = List.of(bus);
         Simulation sim = new Simulation(vehicles, 0.0);
         List<String> names = List.of("Anna", "Bartek", "Cezary");
+        List<String> surnames = List.of("Nowak", "Kowalski", "Wiśniewski");
 
-        sim.genPassengers(bus, names);
+        sim.genPassengers(bus, names, surnames);
 
         assertFalse(bus.getPassengers().isEmpty(), "Passengers should be added");
 

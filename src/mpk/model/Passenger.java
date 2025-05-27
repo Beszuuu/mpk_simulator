@@ -2,18 +2,18 @@ package mpk.model;
 
 
 public class Passenger {
-    private final String name;
+    private final String fullName;
     private final String destination;
     private final boolean hasTicket;
 
-    public Passenger(String name, String destination, boolean hasTicket) {
-        this.name = name;
+    public Passenger(String fullName, String destination, boolean hasTicket) {
+        this.fullName = fullName;
         this.destination = destination;
         this.hasTicket = hasTicket;
     }
 
     public String getName() {
-        return name;
+        return fullName;
     }
 
     public String getDestination() {

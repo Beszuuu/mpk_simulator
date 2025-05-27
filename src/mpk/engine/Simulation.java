@@ -27,12 +27,13 @@ public class Simulation {
     public void step() throws IOException {
         // Load random names for passengers
         List<String> names = CsvLoader.loadNames("src\\mpk\\input\\names.csv");
+        List<String> surnames = CsvLoader.loadNames("src\\mpk\\input\\surnames.csv");
 
         for (Vehicle v : vehicles) {
             if (v.isActive()) { // Only move active vehicles
                 v.unloadPassengers(); // Passengers whose destination is current station get off
 
-                genPassengers(v, names); // Generate new passengers boarding this vehicle
+                genPassengers(v, names, surnames); // Generate new passengers boarding this vehicle
 
                 controlEvent(v); // Maybe a ticket controller appears and checks passengers
 
@@ -57,7 +58,7 @@ public class Simulation {
     }
 
     // Generate passengers at the current station who want to board the vehicle
-    public void genPassengers(Vehicle v, List<String> names) {
+    public void genPassengers(Vehicle v, List<String> names, List<String> surnames) {
         Station current = v.getCurrentStation();
         if (rand.nextDouble() < current.getPopularity()) {
             int availableSeats = v.capacity - v.passengers.size();
@@ -67,6 +68,8 @@ public class Simulation {
 
             for (int i = 0; i < numPassengers; i++) {
                 String name = names.get(rand.nextInt(names.size()));
+                String surname = surnames.get(rand.nextInt(surnames.size()));
+                String fullName = name + " " + surname;
 
                 // Wybierz cel: tylko stacje dalej na trasie
                 int currentIndex = v.getCurrentStationNumber();
@@ -77,7 +80,7 @@ public class Simulation {
                 String dest = futureStops.get(rand.nextInt(futureStops.size())).getName();
 
                 boolean hasTicket = rand.nextDouble() < ticketProbability;
-                v.boardPassenger(new Passenger(name, dest, hasTicket));
+                v.boardPassenger(new Passenger(fullName, dest, hasTicket));
             }
         }
     }

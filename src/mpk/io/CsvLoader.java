@@ -71,4 +71,7 @@ public class CsvLoader {
         csv.close();
         return names;
     }
+    public static List<String> loadSurnames(String filePath) throws IOException {
+        return loadNames(filePath);
+    }
 }
