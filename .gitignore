@@ -1,0 +1,38 @@
+### IntelliJ IDEA ###
+# Konfiguracja IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Specyficzne dla IntelliJ
+/shelf/
+/workspace.xml
+/httpRequests/
+/dataSources/
+/dataSources.local.xml
+
+### Java ###
+# Output kompilacji
+out/
+bin/
+target/
+
+# Pliki klasowe
+*.class
+
+### System ###
+.DS_Store
+Thumbs.db
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+
+### Gradle ###
+.gradle/
+build/
+
+### Testy ###
+/test-results/
