@@ -22,7 +22,13 @@ public class Main {
 
             // User input — get how many of each vehicle type we're dealing with today
             int busesCount = getUserNumber(userInput, "-> Enter number of buses (0–10): ", 0, 10);
-            int tramsCount = getUserNumber(userInput, "-> Enter number of trams (0–10): ", 0, 10);
+            int tramsCount;
+            if(busesCount == 0){
+                tramsCount = getUserNumber(userInput, "-> Enter number of trams (1–10): ", 1, 10);
+            }
+            else {
+                tramsCount = getUserNumber(userInput, "-> Enter number of trams (0–10): ", 0, 10);
+            }
 
             // Ask user if they want to perform auto / manulal mode
             String simulationMode = getSimulationMode(userInput);
