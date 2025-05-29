@@ -51,7 +51,7 @@ public class AllTests {
 
         assertFalse(bus.getPassengers().isEmpty(), "Passengers should be added");
 
-        int initialPassengerCount = bus.getPassengers().size();
+        //int initialPassengerCount = bus.getPassengers().size();
 
         sim.controlEvent(bus);
 

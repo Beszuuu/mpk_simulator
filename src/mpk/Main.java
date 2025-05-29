@@ -2,6 +2,7 @@ package mpk;
 
 // Imports — left a few wildcards even though I know it's not best practice...
 import mpk.engine.*;
+import mpk.gui.GuiLauncher;
 import mpk.io.*;
 import mpk.model.*;
 
@@ -15,6 +16,14 @@ public class Main {
 
         do {
             System.out.println("-! Welcome to the MPK Simulator!");
+
+            System.out.print("Wybierz interfejs (G - GUI, T - terminal): ");
+            String choice = userInput.nextLine().trim().toLowerCase();
+
+            if (choice.equals("g")) {
+                GuiLauncher.launchGui();
+                return;
+            }
 
             // Load data from the input files (this is hardcoded)
             List<List<Station>> availableRoutes = CsvLoader.loadRoutes("src/mpk/input/routes.csv");

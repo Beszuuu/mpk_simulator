@@ -1,0 +1,17 @@
+Bus0: 3 bought tickets
+Bus1: 10 bought tickets
+Bus2: 2 bought tickets
+Bus3: 21 bought tickets
+Tram4: 5 bought tickets
+
+Control results:
+Tram4:
+Mosty Warszawskie, 0 caught
+Pomorska, 0 caught
+
+Bus0:
+Nowy Dwór, 0 caught
+
+Total captures: 0
+Total of bought tickets: 41
+Total earnings: 82 PLN 
