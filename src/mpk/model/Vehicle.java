@@ -2,8 +2,8 @@ package mpk.model;
 
 import java.util.ArrayList;
 import java.util.List;
-// INHERITANCE Base for Bus/Tram
-public class Vehicle implements InterfaceVehicle {
+// ABSTRACT CLASS INHERITANCE Base for Bus/Tram
+public abstract class Vehicle implements InterfaceVehicle {
 
     // ENCAPSULATION Protected for subclasses
     protected String name;
