@@ -26,6 +26,32 @@ public class Simulation {
         this.ticketProbability = ticketProbability;
     }
 
+
+
+    public Map<String, Integer> getBoughtTicketsMap() {
+        return boughtTicketsMap;
+    }
+
+    public int getTotalCaptures() {
+        return totalCaptures;
+    }
+
+    public int getTotalBoughtTickets() {
+        return totalBoughtTickets;
+    }
+
+    public int getTotalEarnings() {
+        earnings += totalBoughtTickets * 2;
+        return earnings;
+    }
+
+    public Map<String, Map<String, Integer>> getControlResults() {
+        return controlResults;
+    }
+
+
+
+
     // Run one simulation step: unload passengers, generate new passengers, run ticket control, and move to next station
     public void step() throws IOException {
         // Load random names for passengers
@@ -114,9 +140,8 @@ public class Simulation {
 
     // After simulation ends, print earnings and save control results to CSV
     public void summary() {
-        // Add earnings from bought tickets (2 PLN per ticket)
-        earnings += totalBoughtTickets * 2;
-        System.out.println("\n\n-> Simulation finished. Total earnings: " + earnings + " PLN");
+
+        System.out.println("\n\n-> Simulation finished. Total earnings: " + getTotalEarnings() + " PLN");
 
         // Build ticket count summary per vehicle
         for (Vehicle v : vehicles) {

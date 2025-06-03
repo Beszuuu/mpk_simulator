@@ -172,6 +172,7 @@ public class Main {
     private static void stepThroughSimulation(Simulation sim, Scanner scanner) throws Exception {
         scanner.nextLine(); // Clear buffer
         while (true) {
+            System.out.println();
             System.out.println("-> Hit SPACE to move forward, Q to stop simulation:");
             String input = scanner.nextLine();
             if ("q".equalsIgnoreCase(input)) break;

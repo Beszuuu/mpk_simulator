@@ -19,12 +19,13 @@ public class GuiLauncher extends Application {
     private List<List<Station>> availableRoutes;
     private List<int[]> vehicleStats;
     private VBox vehicleStatusBox;
+    private GraphPane graphPane;
+    private Simulation simulation;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         availableRoutes = CsvLoader.loadRoutes("src/mpk/input/routes.csv");
         vehicleStats = CsvLoader.loadProperties("src/mpk/input/vehicles.csv");
-
         showStartupDialog(primaryStage);
     }
 
@@ -36,10 +37,10 @@ public class GuiLauncher extends Application {
         configRoot.setPadding(new Insets(15));
 
         Label busesLabel = new Label("Number of Buses (0–10):");
-        Spinner<Integer> busesSpinner = new Spinner<>(0, 10, 0);
+        Spinner<Integer> busesSpinner = new Spinner<>(0, 10, 1);
 
         Label tramsLabel = new Label("Number of Trams (0–10):");
-        Spinner<Integer> tramsSpinner = new Spinner<>(0, 10, 0);
+        Spinner<Integer> tramsSpinner = new Spinner<>(0, 10, 1);
 
         Label modeLabel = new Label("Simulation Mode:");
         ToggleGroup modeGroup = new ToggleGroup();
@@ -52,7 +53,7 @@ public class GuiLauncher extends Application {
         CheckBox randomizeRoutesCheckbox = new CheckBox("Randomize route selection per vehicle");
         randomizeRoutesCheckbox.setSelected(true);
 
-        Button launchButton = new Button("Launch Simulation");
+        Button launchButton = new Button("Start Simulation");
         launchButton.setOnAction(e -> {
             int buses = busesSpinner.getValue();
             int trams = tramsSpinner.getValue();
@@ -86,38 +87,26 @@ public class GuiLauncher extends Application {
         root.setPadding(new Insets(15));
 
         vehicleStatusBox = new VBox(10);
-        ScrollPane scrollPane = new ScrollPane(vehicleStatusBox);
-        scrollPane.setFitToWidth(true);
+        ScrollPane vehicleScroll = new ScrollPane(vehicleStatusBox);
+        vehicleScroll.setPrefHeight(150);
+        vehicleScroll.setFitToWidth(true);
 
         TextArea outputArea = new TextArea();
         outputArea.setEditable(false);
-        outputArea.setWrapText(true);
+        outputArea.setPrefHeight(120);
 
-        runSimulation(buses, trams, manual, randomizeRoutes, outputArea);
-
-        root.getChildren().addAll(scrollPane, outputArea);
-
-        Scene scene = new Scene(root, 600, 700);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    private void runSimulation(int busesCount, int tramsCount, boolean manual, boolean randomizeRoutes, TextArea outputArea) throws Exception {
         fleet = new ArrayList<>();
         Random rand = new Random();
 
-        for (int i = 0; i < busesCount + tramsCount; i++) {
+        for (int i = 0; i < buses + trams; i++) {
             List<Station> route = new ArrayList<>(availableRoutes.get(i % availableRoutes.size()));
             int stops = rand.nextInt(route.size() - 2) + 3;
             if (randomizeRoutes) Collections.shuffle(route);
-            List<Station> selectedRoute = new ArrayList<>(route.subList(0, stops));
+            List<Station> selectedRoute = route.subList(0, stops);
 
-            Vehicle v;
-            if (i < busesCount) {
-                v = new Bus("Bus" + i, selectedRoute, vehicleStats.get(i)[0]);
-            } else {
-                v = new Tram("Tram" + (i - busesCount), selectedRoute, vehicleStats.get(i)[0]);
-            }
+            Vehicle v = (i < buses)
+                    ? new Bus("Bus" + i, selectedRoute, vehicleStats.get(i)[0])
+                    : new Tram("Tram" + (i - buses), selectedRoute, vehicleStats.get(i)[0]);
             fleet.add(v);
 
             ProgressBar progress = new ProgressBar(0);
@@ -126,31 +115,45 @@ public class GuiLauncher extends Application {
             vehicleStatusBox.getChildren().add(box);
         }
 
-        Simulation sim = new Simulation(fleet, 0.8);
+        graphPane = new GraphPane(fleet);
 
+        simulation = new Simulation(fleet, 0.8);
+
+        Button startButton = new Button("▶ Start");
+        startButton.setOnAction(e -> runSimulation(manual, outputArea));
+
+        root.getChildren().addAll(vehicleScroll, graphPane, outputArea, startButton);
+
+        Scene scene = new Scene(root, 700, 700);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void runSimulation(boolean manual, TextArea outputArea) {
         Thread simulationThread = new Thread(() -> {
             try {
-                for (int i = 0; i < 10; i++) {
-                    sim.step();
+                int steps = 10;
+                for (int i = 0; i < steps; i++) {
+                    simulation.step();
                     final int step = i;
                     Platform.runLater(() -> {
                         updateVehicleStatus();
-                        outputArea.appendText("Step " + (step + 1) + " done.\n");
+                        graphPane.updatePositions(fleet);
+                        outputArea.appendText("Krok " + (step + 1) + " zakończony.\n");
                     });
                     Thread.sleep(manual ? 1000 : 500);
                 }
+
                 Platform.runLater(() -> {
-                    outputArea.appendText("\n--- Simulation Summary ---\n");
-                    for (Vehicle v : fleet) {
-                        outputArea.appendText(v.getName() + " sold " + v.getBoughtTickets() + " tickets.\n");
-                    }
-                    outputArea.appendText("Simulation complete.\n");
+                    outputArea.appendText("\n--- KONIEC SYMULACJI ---\n");
+                    SummaryDialog.show(simulation);
                 });
-                sim.clearAll();
+                simulation.clearAll();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+
         simulationThread.setDaemon(true);
         simulationThread.start();
     }
@@ -167,20 +170,11 @@ public class GuiLauncher extends Application {
         }
     }
 
-
     public static void launchGui() {
         launch();
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Choose interface: (G)UI or (T)ext: ");
-        String choice = scanner.nextLine().trim().toUpperCase();
-        if (choice.equals("G")) {
-            launch();
-        } else {
-            // Fall back to text-based launcher or simulation runner
-            System.out.println("Text mode not yet implemented.");
-        }
+        launch();
     }
 }
