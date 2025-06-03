@@ -55,6 +55,6 @@ public class CsvSaver {
         writer.write("Total earnings: " + earnings + " PLN \n");
 
         writer.close();
-        System.out.println("Zapisano kontrolę do pliku: " + outputFile.getPath());
+        System.out.println("Inspection has been saved to file: " + outputFile.getPath());
     }
 }

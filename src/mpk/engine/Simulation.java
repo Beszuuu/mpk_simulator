@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.util.*;
 
 public class Simulation {
+    // COMPOSITION Owns Vehicles
     private final List<Vehicle> vehicles;
     private final Random rand = new Random();
+    // ENCAPSULATION - private field
     private final double ticketProbability;
     private double controllerProbability = 0.1; // Chance a controller shows up on a vehicle
     private int controllerPenalty = 160;
@@ -164,5 +166,9 @@ public class Simulation {
         vehicles.clear();
         controlResults.clear();
         boughtTicketsMap.clear();
+    }
+
+    public List<Vehicle> getVehicles() {
+        return this.vehicles;
     }
 }
