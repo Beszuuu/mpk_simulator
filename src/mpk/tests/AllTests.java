@@ -43,7 +43,7 @@ public class AllTests {
         List<Station> route = Arrays.asList(s1, s2, s3);
         Vehicle bus = new Bus("TestBus", route, 10);
         List<Vehicle> vehicles = List.of(bus);
-        Simulation sim = new Simulation(vehicles, 0.0);
+        Simulation sim = new Simulation(vehicles, 0.0, 0.1, 160);
         List<String> names = List.of("Anna", "Bartek", "Cezary");
         List<String> surnames = List.of("Nowak", "Kowalski", "Wiśniewski");
 
@@ -64,7 +64,9 @@ public class AllTests {
         Vehicle bus = new Bus("TestBus", List.of(s), 5);
         List<Vehicle> vehicleList = new ArrayList<>();
         vehicleList.add(bus);
-        Simulation sim = new Simulation(vehicleList, 1.0);
+        Simulation sim = new Simulation(vehicleList, 1.0, 0, 160);
+
+        sim.genPassengers(bus, List.of("Anna"), List.of("Nowak"));
 
         sim.clearAll();
 

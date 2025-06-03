@@ -11,6 +11,7 @@ import mpk.engine.Simulation;
 import mpk.io.CsvLoader;
 import mpk.model.*;
 
+import java.io.IOException;
 import java.util.*;
 
 public class GuiLauncher extends Application {
@@ -34,7 +35,7 @@ public class GuiLauncher extends Application {
         configStage.setTitle("Start Configuration");
 
         VBox configRoot = new VBox(10);
-        configRoot.setPadding(new Insets(15));
+        configRoot.setPadding(new Insets(9));
 
         Label busesLabel = new Label("Number of Buses (0–10):");
         Spinner<Integer> busesSpinner = new Spinner<>(0, 10, 1);
@@ -50,18 +51,61 @@ public class GuiLauncher extends Application {
         RadioButton manualMode = new RadioButton("Manual");
         manualMode.setToggleGroup(modeGroup);
 
+        Label stepsLabel = new Label("Number of Simulation Steps:");
+        Spinner<Integer> stepsSpinner = new Spinner<>(1, 1000, 10);
+
+        stepsLabel.setVisible(true);
+        stepsSpinner.setVisible(true);
+
+        modeGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            boolean isAuto = newToggle == autoMode;
+            stepsLabel.setVisible(isAuto);
+            stepsSpinner.setVisible(isAuto);
+        });
+
         CheckBox randomizeRoutesCheckbox = new CheckBox("Randomize route selection per vehicle");
         randomizeRoutesCheckbox.setSelected(true);
 
+        // === Slider: Control Probability ===
+        Label probLabel = new Label("Kontrola (prawdopodobieństwo):");
+        Slider probSlider = new Slider(0.0, 1.0, 0.8);
+        probSlider.setShowTickLabels(true);
+        probSlider.setShowTickMarks(true);
+        probSlider.setMajorTickUnit(0.2);
+        probSlider.setMinorTickCount(1);
+        probSlider.setBlockIncrement(0.05);
+        Label probValue = new Label(String.format("%.2f", probSlider.getValue()));
+        probSlider.valueProperty().addListener((obs, oldVal, newVal) -> probValue.setText(String.format("%.2f", newVal.doubleValue())));
+
+        HBox probBox = new HBox(10, probLabel, probSlider, probValue);
+
+        // === Slider: Penalty Amount ===
+        Label penaltyLabel = new Label("Wysokość mandatu (PLN):");
+        Slider penaltySlider = new Slider(0, 1000, 160);
+        penaltySlider.setShowTickLabels(true);
+        penaltySlider.setShowTickMarks(true);
+        penaltySlider.setMajorTickUnit(200);
+        penaltySlider.setMinorTickCount(3);
+        penaltySlider.setBlockIncrement(10);
+        Label penaltyValue = new Label(String.valueOf((int) penaltySlider.getValue()));
+        penaltySlider.valueProperty().addListener((obs, oldVal, newVal) -> penaltyValue.setText(String.valueOf(newVal.intValue())));
+
+        HBox penaltyBox = new HBox(10, penaltyLabel, penaltySlider, penaltyValue);
+
+        // === Launch button ===
         Button launchButton = new Button("Start Simulation");
         launchButton.setOnAction(e -> {
             int buses = busesSpinner.getValue();
             int trams = tramsSpinner.getValue();
             boolean manual = manualMode.isSelected();
             boolean randomizeRoutes = randomizeRoutesCheckbox.isSelected();
+            int steps = autoMode.isSelected() ? stepsSpinner.getValue() : 0;
+            double controllerProbability = probSlider.getValue();
+            int controllerPenalty = (int) penaltySlider.getValue();
+
             configStage.close();
             try {
-                showMainGui(primaryStage, buses, trams, manual, randomizeRoutes);
+                showMainGui(primaryStage, buses, trams, manual, randomizeRoutes, steps, controllerProbability, controllerPenalty);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -71,16 +115,20 @@ public class GuiLauncher extends Application {
                 busesLabel, busesSpinner,
                 tramsLabel, tramsSpinner,
                 modeLabel, autoMode, manualMode,
+                stepsLabel, stepsSpinner,
                 randomizeRoutesCheckbox,
+                probBox,
+                penaltyBox,
                 launchButton
         );
 
-        Scene configScene = new Scene(configRoot, 300, 350);
+        Scene configScene = new Scene(configRoot, 400, 450);
         configStage.setScene(configScene);
         configStage.show();
     }
 
-    private void showMainGui(Stage primaryStage, int buses, int trams, boolean manual, boolean randomizeRoutes) throws Exception {
+
+    private void showMainGui(Stage primaryStage, int buses, int trams, boolean manual, boolean randomizeRoutes, int steps, double controllerProbability, int controllerPenalty) throws Exception {
         primaryStage.setTitle("MPK Simulator - GUI");
 
         VBox root = new VBox(10);
@@ -116,23 +164,47 @@ public class GuiLauncher extends Application {
         }
 
         graphPane = new GraphPane(fleet);
+        simulation = new Simulation(fleet, 0.8, controllerProbability, controllerPenalty);
 
-        simulation = new Simulation(fleet, 0.8);
+        HBox controlBox = new HBox(10);
+        if (manual) {
+            Button nextStepButton = new Button("Next Step");
+            Button endButton = new Button("End");
 
-        Button startButton = new Button("▶ Start");
-        startButton.setOnAction(e -> runSimulation(manual, outputArea));
+            nextStepButton.setOnAction(e -> {
+                try {
+                    simulation.step();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                updateVehicleStatus();
+                graphPane.updatePositions(fleet);
+                outputArea.appendText("Wykonano krok ręczny.\n");
+            });
 
-        root.getChildren().addAll(vehicleScroll, graphPane, outputArea, startButton);
+            endButton.setOnAction(e -> {
+                outputArea.appendText("\n--- KONIEC SYMULACJI ---\n");
+                SummaryDialog.show(simulation);
+                simulation.clearAll();
+            });
+
+            controlBox.getChildren().addAll(nextStepButton, endButton);
+        } else {
+            Button startButton = new Button("▶ Start");
+            startButton.setOnAction(e -> runSimulation(steps, outputArea));
+            controlBox.getChildren().add(startButton);
+        }
+
+        root.getChildren().addAll(vehicleScroll, graphPane, outputArea, controlBox);
 
         Scene scene = new Scene(root, 700, 700);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private void runSimulation(boolean manual, TextArea outputArea) {
+    private void runSimulation(int steps, TextArea outputArea) {
         Thread simulationThread = new Thread(() -> {
             try {
-                int steps = 10;
                 for (int i = 0; i < steps; i++) {
                     simulation.step();
                     final int step = i;
@@ -141,14 +213,14 @@ public class GuiLauncher extends Application {
                         graphPane.updatePositions(fleet);
                         outputArea.appendText("Krok " + (step + 1) + " zakończony.\n");
                     });
-                    Thread.sleep(manual ? 1000 : 500);
+                    Thread.sleep(500);
                 }
 
                 Platform.runLater(() -> {
                     outputArea.appendText("\n--- KONIEC SYMULACJI ---\n");
                     SummaryDialog.show(simulation);
+                    simulation.clearAll();
                 });
-                simulation.clearAll();
             } catch (Exception e) {
                 e.printStackTrace();
             }

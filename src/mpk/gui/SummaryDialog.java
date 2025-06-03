@@ -1,20 +1,22 @@
-// === SummaryDialog.java ===
 package mpk.gui;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import mpk.engine.Simulation;
+import mpk.io.CsvSaver;
 
+import java.io.IOException;
 import java.util.*;
 
 public class SummaryDialog {
 
     public static void show(Simulation sim) {
+        if (sim == null) return;
+
         Stage dialog = new Stage();
         dialog.setTitle("Podsumowanie symulacji");
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -29,55 +31,43 @@ public class SummaryDialog {
         Label tickets = new Label("Sprzedane bilety: " + sim.getTotalBoughtTickets());
         Label fines = new Label("Mandaty: " + sim.getTotalCaptures());
 
-        root.getChildren().addAll(totalLabel, earnings, tickets, fines);
+        root.getChildren().addAll(totalLabel, earnings, tickets, fines, new Separator());
 
-        Separator separator = new Separator();
-        root.getChildren().add(separator);
-
-        Label perVehicleLabel = new Label("Podsumowanie per pojazd:");
-        perVehicleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
-        root.getChildren().add(perVehicleLabel);
-
-        TableView<Map.Entry<String, Integer>> ticketTable = new TableView<>();
-        TableColumn<Map.Entry<String, Integer>, String> vehicleCol = new TableColumn<>("Pojazd");
-        vehicleCol.setCellValueFactory(cell -> new javafx.beans.property.SimpleStringProperty(cell.getValue().getKey()));
-
-        TableColumn<Map.Entry<String, Integer>, String> countCol = new TableColumn<>("Bilety");
-        countCol.setCellValueFactory(cell -> new javafx.beans.property.SimpleStringProperty(String.valueOf(cell.getValue().getValue())));
-
-        ticketTable.getColumns().addAll(vehicleCol, countCol);
-        ticketTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        ticketTable.setItems(FXCollections.observableArrayList(sim.getBoughtTicketsMap().entrySet()));
-        ticketTable.setPrefHeight(150);
-
-        root.getChildren().add(ticketTable);
-
-        Separator separator2 = new Separator();
-        root.getChildren().add(separator2);
-
-        Label caughtLabel = new Label("Kontrole biletów – pasażerowie bez biletu per przystanek:");
+        // ===== Złapani bez biletu per przystanek + % =====
+        Label caughtLabel = new Label("Kontrole biletów – pasażerowie bez biletu per przystanek (%):");
         caughtLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
         root.getChildren().add(caughtLabel);
 
         TableView<CatchRow> caughtTable = new TableView<>();
 
         TableColumn<CatchRow, String> vCol = new TableColumn<>("Pojazd");
-        vCol.setCellValueFactory(cell -> new javafx.beans.property.SimpleStringProperty(cell.getValue().vehicle));
+        vCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().vehicle));
 
         TableColumn<CatchRow, String> sCol = new TableColumn<>("Przystanek");
-        sCol.setCellValueFactory(cell -> new javafx.beans.property.SimpleStringProperty(cell.getValue().station));
+        sCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().station));
 
-        TableColumn<CatchRow, String> nCol = new TableColumn<>("Złapani bez biletu");
-        nCol.setCellValueFactory(cell -> new javafx.beans.property.SimpleStringProperty(String.valueOf(cell.getValue().count)));
+        TableColumn<CatchRow, String> nCol = new TableColumn<>("Złapani");
+        nCol.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().count)));
 
-        caughtTable.getColumns().addAll(vCol, sCol, nCol);
+        TableColumn<CatchRow, String> pCol = new TableColumn<>("Udział (%)");
+        int totalCaught = sim.getTotalCaptures();
+        pCol.setCellValueFactory(cell -> {
+            int count = cell.getValue().count;
+            String percent = totalCaught > 0 ? String.format("%.1f", (count * 100.0) / totalCaught) : "0.0";
+            return new SimpleStringProperty(percent + " %");
+        });
+
+        caughtTable.getColumns().addAll(vCol, sCol, nCol, pCol);
         caughtTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         List<CatchRow> catches = new ArrayList<>();
-        for (Map.Entry<String, Map<String, Integer>> vehicleEntry : sim.getControlResults().entrySet()) {
-            String vehicleName = vehicleEntry.getKey();
-            for (Map.Entry<String, Integer> stationEntry : vehicleEntry.getValue().entrySet()) {
-                catches.add(new CatchRow(vehicleName, stationEntry.getKey(), stationEntry.getValue()));
+        Map<String, Map<String, Integer>> controlMap = sim.getControlResults();
+        if (controlMap != null) {
+            for (Map.Entry<String, Map<String, Integer>> vehicleEntry : controlMap.entrySet()) {
+                String vehicleName = vehicleEntry.getKey();
+                for (Map.Entry<String, Integer> stationEntry : vehicleEntry.getValue().entrySet()) {
+                    catches.add(new CatchRow(vehicleName, stationEntry.getKey(), stationEntry.getValue()));
+                }
             }
         }
 
@@ -86,13 +76,27 @@ public class SummaryDialog {
         root.getChildren().add(caughtTable);
 
         Button close = new Button("Zamknij program");
-        close.setOnAction(e -> {
-            //dialog.close();
-            //Platform.exit();
-            System.exit(0);
+        close.setOnAction(e -> System.exit(0));
+        root.getChildren().add(close);
+
+        Button save = new Button("Zapisz podsumowanie do CSV");
+        save.setOnAction(e -> {
+            try {
+                CsvSaver.saveControlResults(
+                        sim.getControlResults(),
+                        sim.getBoughtTicketsMap(),
+                        sim.getTotalCaptures(),
+                        sim.getTotalEarnings(),
+                        sim.getTotalBoughtTickets()
+                );
+                showAlert(Alert.AlertType.INFORMATION, "Zapisano plik CSV w folderze: src/mpk/output");
+            } catch (IOException ex) {
+                showAlert(Alert.AlertType.ERROR, "Błąd podczas zapisu pliku: " + ex.getMessage());
+            }
         });
 
-        root.getChildren().add(close);
+        root.getChildren().add(save);
+
 
         Scene scene = new Scene(root);
         dialog.setScene(scene);
@@ -110,4 +114,13 @@ public class SummaryDialog {
             this.count = count;
         }
     }
+
+    private static void showAlert(Alert.AlertType type, String msg) {
+        Alert alert = new Alert(type);
+        alert.setTitle("Zapis CSV");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
+    }
+
 }

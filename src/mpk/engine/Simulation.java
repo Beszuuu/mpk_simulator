@@ -11,7 +11,8 @@ public class Simulation {
     private final List<Vehicle> vehicles;
     private final Random rand = new Random();
     private final double ticketProbability;
-    private final double controllerChance = 0.1; // Chance a controller shows up on a vehicle
+    private double controllerProbability = 0.1; // Chance a controller shows up on a vehicle
+    private int controllerPenalty = 160;
     private int earnings = 0;
     private int totalCaptures = 0;
     private int totalBoughtTickets = 0;
@@ -21,9 +22,11 @@ public class Simulation {
     private Map<String, Map<String, Integer>> controlResults = new HashMap<>();
 
     // Constructor takes a list of vehicles and probability that passengers have tickets
-    public Simulation(List<Vehicle> vehicles, double ticketProbability) {
+    public Simulation(List<Vehicle> vehicles, double ticketProbability, double controllerProbability, int controllerPenalty) {
         this.vehicles = vehicles;
         this.ticketProbability = ticketProbability;
+        this.controllerProbability = controllerProbability; // Chance a controller shows up on a vehicle
+        this.controllerPenalty = controllerPenalty;
     }
 
 
@@ -121,10 +124,10 @@ public class Simulation {
 
     // Maybe a controller appears and checks passengers for tickets
     public void controlEvent(Vehicle v) {
-        if (rand.nextDouble() < controllerChance) {
+        if (rand.nextDouble() < controllerProbability) {
             Controller c = new Controller();
             int caught = c.checkPassengers(v.getPassengers()); // How many without tickets got caught
-            earnings += caught * 160; // Each caught passenger pays a fine of 160 PLN
+            earnings += caught * controllerPenalty; // Each caught passenger pays a penalty
             totalCaptures += caught;
             System.out.println("\n\n-> Controller on " + v.getName() + ": caught without ticket: " + caught);
 

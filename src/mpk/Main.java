@@ -123,7 +123,7 @@ public class Main {
             }
 
             // Finally, the sim runs. Hardcoded 80% passenger chance (tweak later?)
-            Simulation simulation = new Simulation(fleet, 0.8);
+            Simulation simulation = new Simulation(fleet, 0.8, 0.1, 160);
 
             // Depending on mode, run sim differently
             if (simulationMode.equalsIgnoreCase("m")) {
