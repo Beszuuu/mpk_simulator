@@ -27,7 +27,7 @@ public class GuiLauncher extends Application {
     public void start(Stage primaryStage) throws Exception {
         availableRoutes = CsvLoader.loadRoutes("src/mpk/input/routes.csv");
         vehicleStats = CsvLoader.loadProperties("src/mpk/input/vehicles.csv");
-        showStartupDialog(primaryStage);
+        showStartupDialog(primaryStage);  // Launch config window first
     }
 
     private void showStartupDialog(Stage primaryStage) {
@@ -37,12 +37,15 @@ public class GuiLauncher extends Application {
         VBox configRoot = new VBox(10);
         configRoot.setPadding(new Insets(9));
 
+        // Spinner for buses
         Label busesLabel = new Label("Number of Buses (0–10):");
         Spinner<Integer> busesSpinner = new Spinner<>(0, 10, 1);
 
+        // Spinner for trams
         Label tramsLabel = new Label("Number of Trams (0–10):");
         Spinner<Integer> tramsSpinner = new Spinner<>(0, 10, 1);
 
+        // Toggle simulation mode
         Label modeLabel = new Label("Simulation Mode:");
         ToggleGroup modeGroup = new ToggleGroup();
         RadioButton autoMode = new RadioButton("Automatic");
@@ -51,12 +54,14 @@ public class GuiLauncher extends Application {
         RadioButton manualMode = new RadioButton("Manual");
         manualMode.setToggleGroup(modeGroup);
 
+        // Step control if auto mode selected
         Label stepsLabel = new Label("Number of Simulation Steps:");
         Spinner<Integer> stepsSpinner = new Spinner<>(1, 1000, 10);
 
         stepsLabel.setVisible(true);
         stepsSpinner.setVisible(true);
 
+        // Show/hide steps depending on mode
         modeGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
             boolean isAuto = newToggle == autoMode;
             stepsLabel.setVisible(isAuto);
@@ -66,8 +71,8 @@ public class GuiLauncher extends Application {
         CheckBox randomizeRoutesCheckbox = new CheckBox("Randomize route selection per vehicle");
         randomizeRoutesCheckbox.setSelected(true);
 
-        // === Slider: Control Probability ===
-        Label probLabel = new Label("Kontrola (prawdopodobieństwo):");
+        // === Control Probability Slider ===
+        Label probLabel = new Label("Control Probability:");
         Slider probSlider = new Slider(0.0, 1.0, 0.8);
         probSlider.setShowTickLabels(true);
         probSlider.setShowTickMarks(true);
@@ -75,12 +80,13 @@ public class GuiLauncher extends Application {
         probSlider.setMinorTickCount(1);
         probSlider.setBlockIncrement(0.05);
         Label probValue = new Label(String.format("%.2f", probSlider.getValue()));
-        probSlider.valueProperty().addListener((obs, oldVal, newVal) -> probValue.setText(String.format("%.2f", newVal.doubleValue())));
+        probSlider.valueProperty().addListener((obs, oldVal, newVal) ->
+                probValue.setText(String.format("%.2f", newVal.doubleValue())));
 
         HBox probBox = new HBox(10, probLabel, probSlider, probValue);
 
-        // === Slider: Penalty Amount ===
-        Label penaltyLabel = new Label("Wysokość mandatu (PLN):");
+        // === Penalty Slider ===
+        Label penaltyLabel = new Label("Penalty Amount (PLN):");
         Slider penaltySlider = new Slider(0, 1000, 160);
         penaltySlider.setShowTickLabels(true);
         penaltySlider.setShowTickMarks(true);
@@ -88,11 +94,12 @@ public class GuiLauncher extends Application {
         penaltySlider.setMinorTickCount(3);
         penaltySlider.setBlockIncrement(10);
         Label penaltyValue = new Label(String.valueOf((int) penaltySlider.getValue()));
-        penaltySlider.valueProperty().addListener((obs, oldVal, newVal) -> penaltyValue.setText(String.valueOf(newVal.intValue())));
+        penaltySlider.valueProperty().addListener((obs, oldVal, newVal) ->
+                penaltyValue.setText(String.valueOf(newVal.intValue())));
 
         HBox penaltyBox = new HBox(10, penaltyLabel, penaltySlider, penaltyValue);
 
-        // === Launch button ===
+        // === Launch Simulation Button ===
         Button launchButton = new Button("Start Simulation");
         launchButton.setOnAction(e -> {
             int buses = busesSpinner.getValue();
@@ -127,8 +134,8 @@ public class GuiLauncher extends Application {
         configStage.show();
     }
 
-
-    private void showMainGui(Stage primaryStage, int buses, int trams, boolean manual, boolean randomizeRoutes, int steps, double controllerProbability, int controllerPenalty) throws Exception {
+    private void showMainGui(Stage primaryStage, int buses, int trams, boolean manual, boolean randomizeRoutes, int steps,
+                             double controllerProbability, int controllerPenalty) throws Exception {
         primaryStage.setTitle("MPK Simulator - GUI");
 
         VBox root = new VBox(10);
@@ -146,6 +153,7 @@ public class GuiLauncher extends Application {
         fleet = new ArrayList<>();
         Random rand = new Random();
 
+        // Creating fleet
         for (int i = 0; i < buses + trams; i++) {
             List<Station> route = new ArrayList<>(availableRoutes.get(i % availableRoutes.size()));
             int stops = rand.nextInt(route.size() - 2) + 3;
@@ -179,11 +187,11 @@ public class GuiLauncher extends Application {
                 }
                 updateVehicleStatus();
                 graphPane.updatePositions(fleet);
-                outputArea.appendText("Wykonano krok ręczny.\n");
+                outputArea.appendText("Manual step executed.\n");
             });
 
             endButton.setOnAction(e -> {
-                outputArea.appendText("\n--- KONIEC SYMULACJI ---\n");
+                outputArea.appendText("\n--- END OF SIMULATION ---\n");
                 SummaryDialog.show(simulation);
                 simulation.clearAll();
             });
@@ -211,13 +219,13 @@ public class GuiLauncher extends Application {
                     Platform.runLater(() -> {
                         updateVehicleStatus();
                         graphPane.updatePositions(fleet);
-                        outputArea.appendText("Krok " + (step + 1) + " zakończony.\n");
+                        outputArea.appendText("Step " + (step + 1) + " completed.\n");
                     });
-                    Thread.sleep(500);
+                    Thread.sleep(500);  // fixed delay between steps
                 }
 
                 Platform.runLater(() -> {
-                    outputArea.appendText("\n--- KONIEC SYMULACJI ---\n");
+                    outputArea.appendText("\n--- END OF SIMULATION ---\n");
                     SummaryDialog.show(simulation);
                     simulation.clearAll();
                 });

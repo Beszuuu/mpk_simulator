@@ -17,7 +17,7 @@ public class Main {
         do {
             System.out.println("-! Welcome to the MPK Simulator!");
 
-            System.out.print("Wybierz interfejs (G - GUI, T - terminal): ");
+            System.out.print("Choose interface (G - GUI, T - terminal): ");
             String choice = userInput.nextLine().trim().toLowerCase();
 
             if (choice.equals("g")) {

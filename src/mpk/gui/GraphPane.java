@@ -16,9 +16,10 @@ public class GraphPane extends Pane {
     private final Map<Vehicle, Integer> vehiclePositions = new HashMap<>();
 
     public GraphPane(List<Vehicle> vehicles) {
-        this.canvas = new Canvas(600, 400);
+        this.canvas = new Canvas(600, 400);  // Arbitrary size for now
         getChildren().add(canvas);
 
+        // Assign random coordinates for each station (not optimal but works)
         for (Vehicle v : vehicles) {
             for (Station s : v.getRoute()) {
                 stationCoords.putIfAbsent(s.getName(), new double[]{
@@ -26,10 +27,10 @@ public class GraphPane extends Pane {
                         50 + Math.random() * 300
                 });
             }
-            vehiclePositions.put(v, 0);
+            vehiclePositions.put(v, 0);  // Start from the beginning
         }
 
-        drawGraph(vehicles);
+        drawGraph(vehicles);  // First render
     }
 
     public void updatePositions(List<Vehicle> vehicles) {
@@ -39,11 +40,12 @@ public class GraphPane extends Pane {
         drawGraph(vehicles);
     }
 
+    // Renders the entire scene from scratch
     private void drawGraph(List<Vehicle> vehicles) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // Draw connections
+        // === Draw the connections (edges) between stations ===
         gc.setStroke(Color.LIGHTGRAY);
         for (Vehicle v : vehicles) {
             List<Station> route = v.getRoute();
@@ -54,26 +56,30 @@ public class GraphPane extends Pane {
             }
         }
 
-        // Draw stations
+        // === Draw the stations themselves ===
         for (Map.Entry<String, double[]> entry : stationCoords.entrySet()) {
             double[] coords = entry.getValue();
             gc.setFill(Color.BLACK);
-            gc.fillOval(coords[0] - 4, coords[1] - 4, 8, 8);
+            gc.fillOval(coords[0] - 4, coords[1] - 4, 8, 8);  // Station dot
             gc.setFont(new Font(10));
-            gc.fillText(entry.getKey(), coords[0] + 5, coords[1] - 5);
+            gc.fillText(entry.getKey(), coords[0] + 5, coords[1] - 5);  // Station label
         }
 
-        // Draw vehicles
+        // === Draw vehicles on their current station ===
         for (Vehicle v : vehicles) {
             int pos = vehiclePositions.getOrDefault(v, 0);
-            if (pos >= v.getRoute().size()) continue;
+            if (pos >= v.getRoute().size()) continue;  // Might be done?
 
             Station s = v.getRoute().get(pos);
             double[] coords = stationCoords.get(s.getName());
-            gc.setFill(Color.BLUE);
+
+            // Draw vehicle dot
+            gc.setFill(Color.BLUE);  // Just using blue for all, could be better
             gc.fillOval(coords[0] - 6, coords[1] - 6, 12, 12);
+
+            // Draw vehicle name over the dot
             gc.setFill(Color.WHITE);
-            gc.fillText(v.getName(), coords[0] - 15, coords[1] - 10);
+            gc.fillText(v.getName(), coords[0] - 15, coords[1] - 10);  // Crude centering
         }
     }
 }

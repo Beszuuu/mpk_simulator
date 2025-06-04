@@ -6,11 +6,11 @@ import java.util.List;
 public class Vehicle implements InterfaceVehicle {
 
     protected String name;
-    protected int currentStationNumber = 0;
+    protected int currentStationNumber = 0;  // Index in the route
     public int capacity;
     public List<Station> route;
-    public List<Passenger> passengers = new ArrayList<>();
-    protected boolean active = true;
+    public List<Passenger> passengers = new ArrayList<>();  // Who’s currently onboard
+    protected boolean active = true;  // Whether vehicle still running
     private int boughtTickets = 0;
 
     public Vehicle(String name, List<Station> route, int capacity) {
@@ -31,67 +31,72 @@ public class Vehicle implements InterfaceVehicle {
     public String getName() {
         return name;
     }
+
     @Override
     public List<Station> getRoute() {
         return route;
     }
+
     @Override
-    public Integer getCapacity() { return capacity; }
+    public Integer getCapacity() {
+        return capacity;
+    }
+
     @Override
-    public boolean isActive() { return active; }
+    public boolean isActive() {
+        return active;
+    }
+
     @Override
     public int getCurrentStationNumber() {
         return currentStationNumber;
     }
+
     @Override
     public Station getCurrentStation() {
-        // Kind of risky if currentStationNumber is ever out of bounds... maybe add guard later?
+        // NOTE: we assume index is valid — might wanna guard against overflow later
         return route.get(currentStationNumber);
     }
+
     @Override
     public List<Passenger> getPassengers() {
         return passengers;
     }
 
-
-
     @Override
     public void nextStation() {
         if (!active) return;
 
-        unloadPassengers();
+        unloadPassengers();  // Drop off anyone whose stop is here
 
         if (currentStationNumber < (route.size() - 1)) {
             currentStationNumber++;
         } else {
-            active = false;
+            active = false;  // Reached end of the line
         }
     }
 
-
-
     @Override
     public void boardPassenger(Passenger p) {
-        // Thought about throwing an exception, but maybe we just ignore silently if full
+        // We could throw an exception if full, but for now just silently ignore
         if (passengers.size() < capacity) {
             passengers.add(p);
         } else {
-            // Optional: log or print warning if over capacity?
+            // Could log or warn about overboarding attempt
         }
     }
 
     @Override
     public void unloadPassengers() {
-        // Drop off passengers who have reached their intended stop
+        // Remove passengers whose destination matches current stop
         String currentStopName = getCurrentStation().getName();
 
-        // Could use iterator manually, but removeIf is neater here
+        // removeIf feels nicer here than iterating manually
         passengers.removeIf(passenger -> {
-            // Might want to log this unload later for debugging
+            // Optionally log each removal for tracing/debug
             return currentStopName.equals(passenger.getDestination());
         });
 
-        // TODO: Possibly return list of removed passengers for further processing
+        // Note: not tracking dropped-off passengers anywhere... maybe later
     }
-
 }

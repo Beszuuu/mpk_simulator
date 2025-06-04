@@ -1,97 +1,134 @@
-# Symulacja MPK Wrocław
+# MPK Wrocław – Symulacja Ruchu Komunikacji Miejskiej
 
 ## Opis projektu
 
-Projekt został stworzony w ramach zajęć **Programowania Obiektowego** i stanowi symulację działania Miejskiego Przedsiębiorstwa Komunikacyjnego (MPK) we Wrocławiu. Symulacja uwzględnia autobusy, tramwaje, pasażerów, kontrolerów oraz przystanki. Projekt napisany został w języku Java z użyciem paradygmatu programowania obiektowego oraz wykorzystuje pliki CSV do importu i eksportu danych.
+Projekt stanowi pełnoprawną symulację działania Miejskiego Przedsiębiorstwa Komunikacyjnego (MPK) we Wrocławiu, umożliwiając analizę przepływu pasażerów, tras pojazdów, sprzedaży biletów i efektywności kontroli. Aplikacja została stworzona w języku **Java** w oparciu o zasady **programowania obiektowego (OOP)**, z wykorzystaniem **JavaFX** do interfejsu graficznego oraz **CSV** jako formatu danych wejściowych i wyjściowych.
+
+Symulacja umożliwia działanie zarówno w trybie tekstowym, jak i graficznym, w pełni konfigurowalnym przez użytkownika.
+
+---
 
 ## Autorzy
 
-* Jakub Besz — 284441
-* Miłosz Osadczuk — 284604
+- **Jakub Besz** — 284441
+- **Miłosz Osadczuk** — 284604
 
 **Prowadzący:** Mgr inż. Tobiasz Puślecki
 
-## Funkcjonalności
+---
 
-* Symulacja tras pojazdów (autobusów i tramwajów)
-* Pasażerowie wsiadający i wysiadający na przystankach według prawdopodobieństwa
-* Obecność kontrolerów sprawdzających bilety
-* Obsługa plików CSV do ładowania tras
-* Raportowanie liczby pasażerów i gapowiczów
+## Kluczowe funkcjonalności
 
-## Struktura klas
+- Symulacja tras autobusów i tramwajów z przystankami
+- Dynamiczne tworzenie pasażerów na podstawie popularności przystanków
+- Losowe pojawianie się kontrolerów biletów w pojazdach
+- Rejestracja biletów, mandatów i łącznych zarobków MPK
+- Profesjonalne graficzne GUI z animowanym grafem trasy i raportami
+- Eksport wyników do plików CSV
 
-* `Stop` – przystanek z nazwą
-* `Vehicle` – pojazd transportowy (bazowa klasa dla `Bus` i `Tram`)
-* `Passenger` – pasażer z celem podróży i biletem
-* `Controller` – kontroler sprawdzający bilety
-* `CsvLoader` – ładowanie danych z plików CSV
-* `Simulation` – główna klasa symulująca przebieg
-* `Person` – generator pasażerów na podstawie prawdopodobieństwa
-* `Main` – uruchomienie programu
+---
+
+## Struktura projektu
+
+Projekt podzielony jest na moduły i warstwy, zgodnie z dobrymi praktykami projektowania:
+
+### `model` – Logika domenowa
+- `Station` – reprezentuje przystanek z nazwą i popularnością
+- `Passenger` – dane pasażera: cel podróży, status biletu
+- `Vehicle` (bazowa) – wspólna dla `Bus` i `Tram`, przechowuje trasę i pasażerów
+- `Controller` – sprawdza bilety i identyfikuje gapowiczów
+
+### `engine` – Mechanika symulacji
+- `Simulation` – centralna klasa uruchamiająca logikę symulacji
+
+### `io` – Obsługa danych
+- `CsvLoader` – ładowanie danych z CSV (trasy, pojazdy, pasażerowie)
+- `CsvSaver` – zapis wyników symulacji do CSV
+
+### `gui` – Interfejs graficzny (JavaFX)
+- `GuiLauncher` – główne okno GUI z panelem kontrolnym i postępem symulacji
+- `GraphPane` – animowany graf przystanków i tras
+- `SummaryDialog` – szczegółowe podsumowanie: bilety, mandaty, kontrole
+
+---
+
+## Interfejs graficzny (JavaFX)
+
+GUI zapewnia:
+- Wybór liczby pojazdów i trybu symulacji
+- Wizualizację tras pojazdów jako grafu przystanków
+- Statystyki czasu rzeczywistego:
+   - liczba pasażerów
+   - postęp trasy
+   - liczba biletów i mandatów
+- Końcowe podsumowanie:
+   - bilety per pojazd
+   - liczba złapanych gapowiczów per przystanek
+   - całkowite zarobki
+- Przycisk zakończenia symulacji i zamknięcia programu
+
+---
 
 ## Technologie
 
-* Java (programowanie obiektowe)
-* Obsługa plików CSV
+- Java 11+
+- JavaFX (GUI)
+- CSV I/O
+- Paradygmat: Obiektowy
 
-## Wymagania
+---
 
-* Java 11 lub nowsza
-* System operacyjny: dowolny (Windows/Linux/macOS)
+## Wymagania systemowe
 
-## Uruchomienie projektu
+- Java 11 lub nowsza
+- JavaFX SDK (np. JavaFX 21)
+- Windows / macOS / Linux
+- IDE (np. IntelliJ IDEA) zalecane do uruchamiania GUI
 
-1. Skompiluj projekt za pomocą kompilatora Javy:
+---
 
-   ```bash
-   javac Main.java
-   ```
-2. Uruchom program:
+## Uruchamianie projektu
 
-   ```bash
-   java Main
-   ```
-3. Upewnij się, że pliki CSV z trasami znajdują się w odpowiednim katalogu.
+### Tryb tekstowy
 
-## Uruchomienie środowiska graficznego (JavaFX)
+```bash
+javac Main.java
+java Main
+```
 
-Aby uruchomić wersję graficzną symulacji, wykonaj poniższe kroki:
+### Tryb graficzny (GUI)
 
-1. **Pobierz JavaFX SDK**
+1. Pobierz JavaFX SDK:  
+   https://gluonhq.com/products/javafx/
 
-   * Przejdź na stronę:
-     [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
-   * Kliknij **Download JavaFX** i pobierz wersję zgodną z Twoim JDK (np. JavaFX 21 dla JDK 21).
-   * Wybierz system operacyjny (Windows/macOS/Linux).
-   * Rozpakuj pobrany plik ZIP, np. do `C:\javafx-sdk-21`.
+2. W IntelliJ:
+   - File → Project Structure → Libraries → dodaj `lib` z JavaFX
+   - Run → Edit Configurations → VM options:
 
-2. **Dodaj JavaFX do projektu w IntelliJ IDEA**
-
-   * Otwórz projekt w IntelliJ.
-   * Przejdź do **File > Project Structure > Libraries**.
-   * Kliknij **+** → **Java**.
-   * Wskaż folder `lib` w katalogu SDK, np. `C:\javafx-sdk-21\lib`.
-   * Zatwierdź i upewnij się, że nowa biblioteka jest przypisana do modułu projektu.
-
-3. **Skonfiguruj opcje VM dla uruchomienia aplikacji**
-
-   * Przejdź do **Run > Edit Configurations**.
-   * Wybierz konfigurację uruchomieniową Twojej klasy głównej (np. `GuiMain`).
-   * W polu **VM options** wklej:
-
-     ```text
-     --module-path "C:\javafx-sdk-21\lib" --add-modules javafx.controls,javafx.fxml
      ```
-   * Upewnij się, że ścieżki wskazują na właściwy katalog, np. zmień `C:\javafx-sdk-21` na własną lokalizację JavaFX SDK.
+     --module-path "C:\\javafx-sdk-21\\lib" --add-modules javafx.controls,javafx.fxml
+     ```
 
-4. **Uruchom wersję graficzną symulacji**
+3. Uruchom klasę `GuiLauncher`.
 
-   * Uruchom konfigurację `GuiMain` w IntelliJ.
-   * Powinno otworzyć się okno aplikacji z interfejsem graficznym.
+---
+
+## Dane wejściowe (CSV)
+
+- `routes.csv` – trasy z nazwami przystanków i popularnością
+- `vehicles.csv` – pojemności pojazdów
+- `names.csv`, `surnames.csv` – dane pasażerów
+
+---
+
+## 🧪 Dane wyjściowe
+
+- `inspection_*.csv` – raporty: bilety, mandaty, kontrole
+- Dane prezentowane w GUI: tabele, grafy, podsumowania
 
 ---
 
 ## Licencja
 
-Projekt edukacyjny — brak oficjalnej licencji.
+Projekt edukacyjny. Dozwolone użycie w celach naukowych, dydaktycznych i niekomercyjnych.
+
