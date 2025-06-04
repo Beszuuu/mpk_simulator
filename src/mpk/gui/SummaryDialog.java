@@ -8,6 +8,7 @@ import javafx.stage.*;
 import javafx.beans.property.SimpleStringProperty;
 import mpk.engine.Simulation;
 import mpk.io.CsvSaver;
+import mpk.model.Vehicle;
 
 import java.io.IOException;
 import java.util.*;
@@ -89,10 +90,19 @@ public class SummaryDialog {
         // Save CSV with results — might fail if file is locked
         Button save = new Button("Save Summary to CSV");
         save.setOnAction(e -> {
+            sim.getBoughtTicketsMap().clear();
+            List<Vehicle> vehicles = sim.getVehicles();
+
+            // Loading bought ticket map
+            Map<String, Integer> ticketsMap = new TreeMap<>();
+            for (Vehicle v : vehicles) {
+                ticketsMap.put(v.getName(), v.getBoughtTickets());
+            }
+
             try {
                 CsvSaver.saveControlResults(
                         sim.getControlResults(),
-                        sim.getBoughtTicketsMap(),
+                        ticketsMap,
                         sim.getTotalCaptures(),
                         sim.getTotalEarnings(),
                         sim.getTotalBoughtTickets()

@@ -2,9 +2,10 @@ package mpk.model;
 
 import java.util.ArrayList;
 import java.util.List;
+// ABSTRACT CLASS INHERITANCE Base for Bus/Tram
+public abstract class Vehicle implements InterfaceVehicle {
 
-public class Vehicle implements InterfaceVehicle {
-
+    // ENCAPSULATION Protected for subclasses
     protected String name;
     protected int currentStationNumber = 0;  // Index in the route
     public int capacity;
@@ -12,6 +13,7 @@ public class Vehicle implements InterfaceVehicle {
     public List<Passenger> passengers = new ArrayList<>();  // Who’s currently onboard
     protected boolean active = true;  // Whether vehicle still running
     private int boughtTickets = 0;
+
 
     public Vehicle(String name, List<Station> route, int capacity) {
         this.name = name;

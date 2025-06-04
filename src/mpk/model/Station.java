@@ -1,6 +1,8 @@
 package mpk.model;
 
+// AGGREGATION Independent existence
 public class Station {
+    // ENCAPSULATION Private fields
     private final String name;
     private final double popularity; // A value representing how "busy" or "well-known" the station is
 
