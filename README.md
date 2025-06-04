@@ -121,7 +121,7 @@ java Main
 
 ---
 
-## 🧪 Dane wyjściowe
+## Dane wyjściowe
 
 - `inspection_*.csv` – raporty: bilety, mandaty, kontrole
 - Dane prezentowane w GUI: tabele, grafy, podsumowania
